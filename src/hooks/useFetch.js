@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-export const useFetch = () => {
+export const useFetch = ( url ) => {
 
     const [state, setState] = useState({
         data: null, 
@@ -13,14 +13,46 @@ export const useFetch = () => {
         getFectch()
         
 
-    }, [])
-    
+    }, [url])
+
+    const setLoadingState = () => {
+        setState({
+            data: null, 
+            isLoading: true,
+            hasError: false,
+            error: null,
+        })
+    }
+
     const getFectch = async() => {
 
-        const resp = await fetch('https://pokeapi.co/api/v2/pokemon/ditto')
-        const data = await resp.json()
+        setLoadingState();
+        const resp = await fetch(url);
+        
+        await new Promise( resolve => setTimeout(resolve, 1500) );
+        
+        if ( !resp.ok ){
+            setState({
+                data: null,
+                isLoading: false,
+                hasError: true,
+                error: {
+                    code: resp.status,
+                    massage: resp.statusText,
+                }
+            })
+            return;
+        }
 
-        console.log({data})
+        const data = await resp.json()
+        setState({
+            data: data,
+            isLoading: false,
+            hasError: false,
+        });
+
+
+        console.log({data});
 
 
     }
