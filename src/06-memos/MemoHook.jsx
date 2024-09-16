@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { useCounter } from "../hooks/useCounter"
 
 
@@ -8,22 +8,23 @@ const heavyStuff = ( iterationNumber = 100 ) => {
   }
 
   return `${ iterationNumber }`
-} 
+}
 
 
 
 export const MemoHook = () => {
 
-  const { counter, increment } = useCounter( 10 )
+  const { counter, increment } = useCounter( 4000 )
   const [ show, setShow ] = useState(true)
 
+  const memorizeValue = useMemo( () => heavyStuff(counter), [counter] )
 
   return (
     <>
         <h1>Counter: <small>{ counter }</small> </h1>
         <hr />
 
-        <h4>{ heavyStuff( 500 ) }</h4>
+        <h4>{ memorizeValue }</h4>
 
         <button 
           className="btn btn-primary"
